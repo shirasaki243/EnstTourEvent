@@ -28,7 +28,7 @@ const musicData = [
     { name: "Eccentric Party Night!!", attr: "sparkle", time: 143 },
     { name: "PARANOIA STREET", attr: "sparkle", time: 144 },
     { name: "パラダイム・リバーシ！", attr: "sparkle", time: 144 },
-    { name: "Trap For You", attr: "none", time: 144 },
+    { name: "Trap For You", attr: "sparkle", time: 144 },
     { name: "凱旋歌", attr: "sparkle", time: 145 },
     { name: "僕のウィーク・ポイント", attr: "sparkle", time: 145 },
     { name: "エンドレスヴィーデ", attr: "sparkle", time: 146 },
