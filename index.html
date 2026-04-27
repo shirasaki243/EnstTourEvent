@@ -5,127 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>【あんスタ】ツアイベセトリ管理ツール</title>
     <style>
-        /* サイズ計算を余白込み*/
-* {
-    box-sizing: border-box;
-}
-
-/*スマホ用調整を強化 */
-@media (max-width: 600px) {
-    body {
-        padding: 10px; 
-    }
-    .container {
-        padding: 15px; 
-    }
-    .day-card {
-        padding: 12px; 
-    }
+    /* ⬇️ これが一番大事！全体のサイズ計算を狂わせない */
+    * { box-sizing: border-box; }
     
-    .song-grid {
-        grid-template-columns: 1fr; 
+    /* ⬇️ 入力欄が画面幅を突き破るのを防ぐ */
+    input[type="text"] { width: 100%; }
+
+    @media (min-width: 800px) { .container { max-width: 1000px; } }
+    
+    /* ⬇️ スマホ向けレイアウト：2列から「1列」にして余白を削る */
+    @media (max-width: 600px) { 
+        .song-grid { grid-template-columns: 1fr; } 
+        body { padding: 10px; }
+        .container { padding: 15px; }
+        .day-card { padding: 12px; }
     }
 
-    /* 並びが崩れないように調整 */
-    .filter-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 5px;
-    }
-    .filter-buttons button {
-        flex: 1 1 calc(33.333% - 10px); /* 3つずつ並ぶ */
-        font-size: 12px;
-        padding: 8px 5px;
-    }
-}
-        @media (min-width: 800px) { .container { max-width: 1000px; } }
-        @media (max-width: 600px) { .song-grid { grid-template-columns: repeat(2, 1fr); } }
-        :root { 
+    :root { 
         --red: #ff6b6b; --blue: #54a0ff; --yellow: #feca57; --green: #86ac4d; --all: #dcdde1; 
         --bg-color: #66a5ad; 
-            }
+    }
 
-        body { 
-            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif; 
-            background: var(--bg-color); padding: 20px; color: #2f3640; line-height: 1.6;
-            }
+    body { 
+        font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif; 
+        background: var(--bg-color); padding: 20px; color: #2f3640; line-height: 1.6;
+    }
 
-        .container { 
-            max-width: 900px; margin: 0 auto; background: rgba(255, 255, 255, 0.8); 
-            backdrop-filter: blur(10px); padding: 25px; border-radius: 16px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-                    }
-        input[type=number] {
-        appearance: textfield; /* 標準プロパティ */
-        -moz-appearance: textfield; /* Firefox用 */
-        }
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
+    .container { 
+        max-width: 900px; margin: 0 auto; background: rgba(255, 255, 255, 0.8); 
+        backdrop-filter: blur(10px); padding: 25px; border-radius: 16px; 
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    
+    input[type=number] {
+        appearance: textfield; 
+        -moz-appearance: textfield; 
+    }
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
         -webkit-appearance: none;
         margin: 0;
-        }
+    }
 
-            /* 使い方・問い合わせ枠 */
-        .info-section {
-            background: #badbf2; border: 1px solid #e1e8ed; padding: 15px;
-            border-radius: 12px; margin-bottom: 20px; font-size: 0.85rem;
-        }
-        .info-section h3 { margin-top: 0; font-size: 1rem; color: #576574; }
-        .info-section ul { padding-left: 20px; margin-bottom: 10px; }
-        .mond-link { 
-            display: inline-block; text-decoration: none; color: #54a0ff; 
-            font-weight: bold; border-bottom: 1px solid #54a0ff; transition: 0.2s;
-        }
-        .mond-link:hover { color: #2e86de; border-color: #2e86de; }
+    .info-section {
+        background: #badbf2; border: 1px solid #e1e8ed; padding: 15px;
+        border-radius: 12px; margin-bottom: 20px; font-size: 0.85rem;
+    }
+    .info-section h3 { margin-top: 0; font-size: 1rem; color: #576574; }
+    .info-section ul { padding-left: 20px; margin-bottom: 10px; }
+    .mond-link { 
+        display: inline-block; text-decoration: none; color: #54a0ff; 
+        font-weight: bold; border-bottom: 1px solid #54a0ff; transition: 0.2s;
+    }
+    .mond-link:hover { color: #2e86de; border-color: #2e86de; }
 
-            /* 見た目改善 */
-        .day-card { 
-            border: none; background: white; padding: 20px; border-radius: 12px; 
-            margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
-            transition: transform 0.2s;
-        }
-        .day-card:hover { transform: translateY(-2px); }
+    .day-card { 
+        border: none; background: white; padding: 20px; border-radius: 12px; 
+        margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
+        transition: transform 0.2s;
+        position: relative; z-index: 1; 
+    }
+    .day-card:hover { transform: translateY(-2px); }
+    .day-card:focus-within { z-index: 999; } 
 
-            /* ボタン */
-        button.sort-btn { 
-            padding: 6px 12px; border: 1px solid #dcdde1; background: white; 
-            cursor: pointer; border-radius: 6px; font-size: 0.8rem; transition: 0.2s;
-        }
-        button.sort-btn:hover { background: #f1f2f6; border-color: #b2bec3; }
+    button.sort-btn { 
+        padding: 6px 12px; border: 1px solid #dcdde1; background: white; 
+        cursor: pointer; border-radius: 6px; font-size: 0.8rem; transition: 0.2s;
+    }
+    button.sort-btn:hover { background: #f1f2f6; border-color: #b2bec3; }
 
-         /* レイアウト維持用 */
-        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .day-title { font-weight: bold; border-bottom: 2px solid #54a0ff; margin-bottom: 15px; display: flex; justify-content: space-between; }
-        .song-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 15px; }
-        .badge { padding: 3px 7px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; color: white; }
-            
-        /* スコア欄レイアウト */
-        .score-section { display: flex; gap: 10px; align-items: center; background: #f9f9f9; padding: 10px; border-radius: 8px; flex-wrap: wrap; margin-top: 15px; }
-        .score-total { font-weight: bold; color: #54a0ff; font-size: 1.1rem; }
-
-        /* 曲名ボックスの基本設定 */
-        .song-box { position: relative; background: none; overflow: visible !important; }
-
-        /* 余計な線を消す */
-        .song-box div[style*="display:flex"] { border: none !important; outline: none !important; box-shadow: none !important; background: transparent !important; }
-        .song-box button { border: 1px solid #ccc; box-shadow: none !important; }
-        input { box-shadow: none !important; }
-
-        /* 検索リスト設定 */
-        .search-results { 
-            display: none; position: absolute; width: 100%; background: white; 
-            border: 1px solid #dcdde1; z-index: 9999 !important; max-height: 200px; 
-            overflow-y: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-radius: 6px;
-        }
+    .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .day-title { font-weight: bold; border-bottom: 2px solid #54a0ff; margin-bottom: 15px; display: flex; justify-content: space-between; }
+    .song-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 15px; }
+    .badge { padding: 3px 7px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; color: white; }
         
-        /* 検索結果リスト見た目 */
-        .search-results li { padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #f1f2f6; font-size: 0.85rem; list-style: none; }
-        .search-results li:hover { background: #f1f2f6; }
+    .score-section { display: flex; gap: 10px; align-items: center; background: #f9f9f9; padding: 10px; border-radius: 8px; flex-wrap: wrap; margin-top: 15px; }
+    .score-total { font-weight: bold; color: #54a0ff; font-size: 1.1rem; }
 
-        /* 入力中のカードだけを最前面に */
-        .day-card { position: relative; z-index: 1; }
-        .day-card:focus-within { z-index: 999; }
-    </style>
+    .song-box { position: relative; background: none; overflow: visible !important; }
+    .song-box div[style*="display:flex"] { border: none !important; outline: none !important; box-shadow: none !important; background: transparent !important; }
+    .song-box button { border: 1px solid #ccc; box-shadow: none !important; }
+    input { box-shadow: none !important; }
+
+    .search-results { 
+        display: none; position: absolute; width: 100%; background: white; 
+        border: 1px solid #dcdde1; z-index: 9999 !important; max-height: 200px; 
+        overflow-y: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-radius: 6px;
+    }
+    .search-results li { padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #f1f2f6; font-size: 0.85rem; list-style: none; }
+    .search-results li:hover { background: #f1f2f6; }
+</style>
+
 </head>
 <body>
 
