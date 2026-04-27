@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【あんスタ】ツアイベセトリ管理ツール</title>
+    <style>
+        @media (min-width: 800px) { .container { max-width: 1000px; } }
+        @media (max-width: 600px) { .song-grid { grid-template-columns: repeat(2, 1fr); } }
+        :root { 
+        --red: #ff6b6b; --blue: #54a0ff; --yellow: #feca57; --green: #86ac4d; --all: #dcdde1; 
+        --bg-color: #66a5ad; 
+            }
+
+        body { 
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif; 
+            background: var(--bg-color); padding: 20px; color: #2f3640; line-height: 1.6;
+            }
+
+        .container { 
+            max-width: 900px; margin: 0 auto; background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(10px); padding: 25px; border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+                    }
+        input[type=number] {
+        appearance: textfield; /* 標準プロパティ */
+        -moz-appearance: textfield; /* Firefox用 */
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+        }
+
+            /* 使い方・問い合わせ枠 */
+        .info-section {
+            background: #badbf2; border: 1px solid #e1e8ed; padding: 15px;
+            border-radius: 12px; margin-bottom: 20px; font-size: 0.85rem;
+        }
+        .info-section h3 { margin-top: 0; font-size: 1rem; color: #576574; }
+        .info-section ul { padding-left: 20px; margin-bottom: 10px; }
+        .mond-link { 
+            display: inline-block; text-decoration: none; color: #54a0ff; 
+            font-weight: bold; border-bottom: 1px solid #54a0ff; transition: 0.2s;
+        }
+        .mond-link:hover { color: #2e86de; border-color: #2e86de; }
+
+            /* 見た目改善 */
+        .day-card { 
+            border: none; background: white; padding: 20px; border-radius: 12px; 
+            margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
+            transition: transform 0.2s;
+        }
+        .day-card:hover { transform: translateY(-2px); }
+
+            /* ボタン */
+        button.sort-btn { 
+            padding: 6px 12px; border: 1px solid #dcdde1; background: white; 
+            cursor: pointer; border-radius: 6px; font-size: 0.8rem; transition: 0.2s;
+        }
+        button.sort-btn:hover { background: #f1f2f6; border-color: #b2bec3; }
+
+         /* レイアウト維持用 */
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .day-title { font-weight: bold; border-bottom: 2px solid #54a0ff; margin-bottom: 15px; display: flex; justify-content: space-between; }
+        .song-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 15px; }
+        .badge { padding: 3px 7px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; color: white; }
+            
+        /* スコア欄レイアウト */
+        .score-section { display: flex; gap: 10px; align-items: center; background: #f9f9f9; padding: 10px; border-radius: 8px; flex-wrap: wrap; margin-top: 15px; }
+        .score-total { font-weight: bold; color: #54a0ff; font-size: 1.1rem; }
+
+        /* 曲名ボックスの基本設定 */
+        .song-box { position: relative; background: none; overflow: visible !important; }
+
+        /* 余計な線を消す */
+        .song-box div[style*="display:flex"] { border: none !important; outline: none !important; box-shadow: none !important; background: transparent !important; }
+        .song-box button { border: 1px solid #ccc; box-shadow: none !important; }
+        input { box-shadow: none !important; }
+
+        /* 検索リスト設定 */
+        .search-results { 
+            display: none; position: absolute; width: 100%; background: white; 
+            border: 1px solid #dcdde1; z-index: 9999 !important; max-height: 200px; 
+            overflow-y: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-radius: 6px;
+        }
+        
+        /* 検索結果リスト見た目 */
+        .search-results li { padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #f1f2f6; font-size: 0.85rem; list-style: none; }
+        .search-results li:hover { background: #f1f2f6; }
+
+        /* 入力中のカードだけを最前面に */
+        .day-card { position: relative; z-index: 1; }
+        .day-card:focus-within { z-index: 999; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>【あんスタ】ツアーイベント セトリ管理 (Day1 - Day30)</h1>
+    <div class="info-section">
+    <h3>💡 使い方</h3>
+        <ul>
+            <li><strong>検索：</strong> 曲名の一部を入力して候補から選んでください 検索リストのレシート化を防ぐため、<strong>一度に出てくる曲数を制限しています</strong></li>
+            <li><strong>保存：</strong> ブラウザを閉じても保存される設定になっていますが、セトリ設定後など必要に応じて「保存」で書き出してください (読み込みボタンから保存したものを復元することが出来ます)</li>
+            <li><strong>集計：</strong> ＋/－ボタン・入力で各楽曲のクリア回数を記録できます 石堀りに活用してください</li>
+            <li><strong>ソート：</strong> 各種ボタンでセトリの並べ替えができます 周回日決めにどうぞ</li>
+            <li><strong>日付順/スコア順/難易度順/分数順：昇順⇄降順</strong></li>
+            <li><strong>スコア順：</strong>２周目以降・編成変更後などに<strong>最高値でない編成のスコア</strong>を記録できます</li>
+            <li><strong>難易度順：</strong>フルコン/パフェコンの難易度で<strong>FEVER％の維持しやすさ</strong>を記録できます</li>
+            <li><strong>属性順：</strong>何度か押すと楽曲の<u>属性ごと(Sparkle/Brilliant/Glitter/Flash/All)</u>に、<strong>４曲目を基準としてセトリの並べ替え</strong>ができます</li>
+            <li><strong>楽曲データは、メモ置き場（＠@zu_KAETTEKITE）さんのデータを参考にさせて頂いております</strong></li>
+        </ul>
+    <a href="https://mond.how/ja/len71a1dk" target="_blank" class="mond-link">✉ ご質問・ご要望・不具合報告などはこちらから（mond）</a>
+    </div>
+    <div class="controls">
+        <button class="sort-btn" onclick="sortDays('day')">日付順</button>
+        <button class="sort-btn" onclick="sortDays('score')">スコア順</button>
+        <button class="sort-btn" onclick="sortDays('difficulty')">難易度順</button>
+        <button class="sort-btn" onclick="sortDays('color')">属性順</button>
+        <button class="sort-btn" onclick="sortDays('time')">分数順</button>
+        <button class="sort-btn" onclick="exportData()">保存</button>
+        <label style="border: 1px solid #888; padding: 5px; cursor: pointer; border-radius: 4px; background: #fff; font-size: 0.8rem;">
+            読み込み
+            <input type="file" onchange="importData(this.files[0])" style="display:none">
+        </label>
+        <button class="sort-btn" style="background:#ffcccc" onclick="resetAllData()">全リセット</button>
+    </div>
+    <div id="main-list"></div>
+</div>
+<script src="musicData.js"></script>
+<script>
+    const attrMap = { 
+        sparkle: {name: 'Sparkle', color: 'var(--red)'}, brilliant: {name: 'Brilliant', color: 'var(--blue)'}, 
+        glitter: {name: 'Glitter', color: 'var(--green)'}, flash: {name: 'Flash', color: 'var(--yellow)'}, 
+        all: {name: 'All', color: 'var(--all)'},
+        Sparkle: {name: 'Sparkle', color: 'var(--red)'}, Brilliant: {name: 'Brilliant', color: 'var(--blue)'}, 
+        Glitter: {name: 'Glitter', color: 'var(--green)'}, Flash: {name: 'Flash', color: 'var(--yellow)'}, 
+        All: {name: 'All', color: 'var(--all)'},
+        none: {name: '-', color: '#888'} 
+    };
+
+    // 初期値をnull に変更
+    let state = JSON.parse(localStorage.getItem('tour_event_30days')) || Array.from({length: 30}, (_, i) => ({
+        day: i + 1, selectedSongs: [null, null, null, null], counts: [0, 0, 0, 0], score123: 0, score4: 0, difficulty: "中"
+    }));
+
+    let currentSort = { type: 'day', isAsc: true };
+    let colorSortOffset = 0;
+
+    function saveAndRender() { 
+        localStorage.setItem('tour_event_30days', JSON.stringify(state)); 
+        render(); 
+    }
+
+    function render() {
+        const list = document.getElementById('main-list');
+        if (!list) return;
+        list.innerHTML = '';
+        state.forEach((data, dayIdx) => {
+            const totalScore = (parseInt(data.score123) || 0) + (parseInt(data.score4) || 0);
+            
+            // 合計時間の計算（nullを除外）
+            let totalSec = 0;
+            data.selectedSongs.forEach(sIdx => {
+                if (sIdx !== null && musicData[sIdx]) totalSec += (musicData[sIdx].time || 0);
+            });
+            const timeStr = `${Math.floor(totalSec/60)}:${(totalSec%60).toString().padStart(2,'0')}`;
+
+            const card = document.createElement('div');
+            card.className = 'day-card';
+            card.innerHTML = `
+                <div class="day-title"><span>Day ${data.day}</span><span>⏱ ${timeStr}</span></div>
+                <div class="song-grid">${[1, 2, 3, 4].map((num, i) => {
+                    const sIdx = data.selectedSongs[i];
+                    const song = (sIdx !== null) ? musicData[sIdx] : null;
+                    return `<div class="song-box">
+                        <label>${num}曲目 
+                            ${song ? `<span class="badge" style="background:${attrMap[song.attr]?.color || '#888'}">${attrMap[song.attr]?.name || '-'}</span>` : ''}
+                        </label>
+                        <input type="text" placeholder="検索..." value="${song ? song.name : ''}" oninput="filterSongs(${dayIdx}, ${i}, this.value)">
+                        <ul id="results-${dayIdx}-${i}" class="search-results"></ul>
+                        <div style="margin-top:5px; display:flex; gap:2px; overflow:hidden; border:none;">
+                        <button onclick="updateCount(${dayIdx}, ${i}, -1)">－</button>
+                        <input type="number" value="${data.counts[i]}" style="width: 40px; text-align: center; border: 1px solid #ccc;" onchange="setCount(${dayIdx}, ${i}, this.value)">
+                        <button onclick="updateCount(${dayIdx}, ${i}, 1)">＋</button>
+                        </div>
+                    </div>`;
+                }).join('')}</div>
+                <div class="score-section">
+                    <div><label style="font-size:0.9rem">1-3曲</label><input type="number" value="${data.score123}" onchange="updateScore(${dayIdx}, 'score123', this.value)" style="width:80px"></div>
+                    <div><label style="font-size:0.9rem">4曲</label><input type="number" value="${data.score4}" onchange="updateScore(${dayIdx}, 'score4', this.value)" style="width:80px"></div>
+                    <div><label style="font-size:0.9rem">合計</label><div class="score-total">${totalScore.toLocaleString()}</div></div>
+                    <div style="margin-left:auto"><label style="font-size:0.9rem">難易度</label>
+                        <select style="width:60px" onchange="updateDiff(${dayIdx}, this.value)">
+                            <option value="易" ${data.difficulty==='易'?'selected':''}>易</option>
+                            <option value="中" ${data.difficulty==='中'?'selected':''}>中</option>
+                            <option value="難" ${data.difficulty==='難'?'selected':''}>難</option>
+                        </select>
+                    </div>
+                </div>`;
+            list.appendChild(card);
+        });
+    }
+    function sortDays(type) {
+    //　ソート状態の管理
+        if (currentSort.type === type) { 
+            if (type === 'color') {
+                // 色順連打時は、オフセ1つずつずらす
+                colorSortOffset = (colorSortOffset + 1) % 6; 
+                currentSort.isAsc = true; // 常に固定して計算を狂わせない
+            } else {
+                // 色順以外は昇順・降順の反転
+                currentSort.isAsc = !currentSort.isAsc; 
+            }
+        } else { 
+                    // 別のソートボタンが押されたとき
+                currentSort.type = type; 
+                currentSort.isAsc = (type === 'score') ? false : true; 
+                colorSortOffset = 0; // オフセリセット
+                }
+    
+    const modifier = currentSort.isAsc ? 1 : -1;
+
+    // 実際の並び替え処理
+    state.sort((a, b) => {
+        let valA, valB;
+        if (type === 'day') { valA = a.day; valB = b.day; } 
+        else if (type === 'score') { valA = (a.score123 || 0) + (a.score4 || 0); valB = (b.score123 || 0) + (b.score4 || 0); } 
+        else if (type === 'difficulty') { const order = {'易':0,'中':1,'難':2}; valA = order[a.difficulty]; valB = order[b.difficulty]; } 
+        else if (type === 'color') {
+            // 大文字・小文字どちらでデータが来ても大丈夫なよう定義
+            const baseOrder = {
+                sparkle:0, Sparkle:0,
+                brilliant:1, Brilliant:1,
+                glitter:2, Glitter:2,
+                flash:3, Flash:3,
+                all:4, All:4,
+                none:5
+            };
+
+            const attrA = musicData[a.selectedSongs[3]]?.attr || 'none';
+            const attrB = musicData[b.selectedSongs[3]]?.attr || 'none';
+
+            // オフセットで「先頭にしたい色」を0番目として扱う
+            valA = (baseOrder[attrA] - colorSortOffset + 6) % 6;
+            valB = (baseOrder[attrB] - colorSortOffset + 6) % 6;
+        } else if (type === 'time') {
+            valA = a.selectedSongs.reduce((acc, idx) => acc + (idx !== null ? musicData[idx]?.time || 0 : 0), 0);
+            valB = b.selectedSongs.reduce((acc, idx) => acc + (idx !== null ? musicData[idx]?.time || 0 : 0), 0);
+        }
+        return (valA - valB) * modifier;
+    });
+    render();
+}
+
+function filterSongs(dayIdx, songPos, keyword) {
+    const list = document.getElementById(`results-${dayIdx}-${songPos}`);
+    list.innerHTML = '';
+    
+    // キーワードが空ならリストを隠して終了
+    if (!keyword) { 
+        list.style.display = 'none'; 
+        return; 
+    }
+    
+    // 曲名検索（最大8件）
+    const matches = musicData.filter(m => 
+        m.name.toLowerCase().includes(keyword.toLowerCase())
+    ).slice(0, 8);
+    
+    if (matches.length > 0) {
+        list.style.display = 'block';
+        matches.forEach(m => {
+            const li = document.createElement('li'); 
+            li.innerText = m.name;
+            
+            // onmousedown に変更
+            // 隠れる前に選択が確定するように
+            li.onmousedown = (e) => { 
+                // イベントの連鎖を止める
+                e.preventDefault();
+                
+                state[dayIdx].selectedSongs[songPos] = musicData.indexOf(m); 
+                list.style.display = 'none'; 
+                saveAndRender(); 
+            };
+            
+            list.appendChild(li);
+        });
+    } else {
+        list.style.display = 'none';
+    }
+}
+    function setCount(dayIdx, songPos, val) { state[dayIdx].counts[songPos] = Math.max(0, parseInt(val) || 0); saveAndRender(); }
+    function updateCount(dayIdx, songPos, val) { state[dayIdx].counts[songPos] = Math.max(0, state[dayIdx].counts[songPos] + val); saveAndRender(); }
+    function updateScore(dayIdx, key, val) { state[dayIdx][key] = parseInt(val) || 0; saveAndRender(); }
+    function updateDiff(dayIdx, val) { state[dayIdx].difficulty = val; saveAndRender(); }
+
+    function resetAllData() {
+        if(!confirm("全てリセットしますか？")) return;
+        state = Array.from({length: 30}, (_, i) => ({
+            day: i + 1, selectedSongs: [null, null, null, null], counts: [0, 0, 0, 0], score123: 0, score4: 0, difficulty: "中"
+        }));
+        saveAndRender();
+    }
+    // データ書き出し
+    function exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "tourdata.json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    }
+
+    // データ読み込み
+    function importData(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            state = JSON.parse(e.target.result);
+            saveAndRender();
+        };
+        reader.readAsText(file);
+    }
+    render();
+</script>
+</body>
+</html>
