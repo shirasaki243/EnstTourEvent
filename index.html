@@ -88,14 +88,7 @@
         .container { max-width: 1000px; } 
     }
 
-    @media (max-width: 600px){
-    h1 {
-        font-size: 1.2rem; 
-        margin-top: 5px;
-        margin-bottom: 15px;
-        text-align: center;
-    }  
-       { 
+    @media (max-width: 600px){ 
         /* PC用の4列を1列に上書 */
         .song-grid { 
             grid-template-columns: 1fr; 
@@ -123,7 +116,13 @@
             display: flex;
             justify-content: space-between;
         }
+    h1 {
+        font-size: 1.2rem; 
+        margin-top: 5px;
+        margin-bottom: 15px;
+        text-align: center;
     }
+   }
 </style>
 </head>
 <body>
