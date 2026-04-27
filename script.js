@@ -1,33 +1,57 @@
-// 検索ロジック
+function normalize(str) {
+    return str
+        .toLowerCase()
+        .replace(/[ァ-ン]/g, s => 
+            String.fromCharCode(s.charCodeAt(0) - 0x60)
+        );
+}
+
+const searchData = musicData.map((m, index) => ({
+    ...m,
+    index: index,
+    searchName: normalize(m.name)
+}));
+
 function filterSongs(dayIdx, songPos, keyword) {
     const list = document.getElementById(`results-${dayIdx}-${songPos}`);
-    list.innerHTML = ''; 
-    if (!keyword) {
+    list.innerHTML = '';
+
+    if (!keyword || keyword.length < 1) {
         list.style.display = 'none';
         return;
     }
 
-    // 全曲からキーワード検索
-    const matches = musicData.filter(m => 
-        m.name.toLowerCase().includes(keyword.toLowerCase())
-    ).slice(0, 8); 
+    const keywordNorm = normalize(keyword);
+
+    const matches = searchData
+        .filter(m => m.searchName.startsWith(keywordNorm))
+        .concat(
+            searchData.filter(m => 
+                !m.searchName.startsWith(keywordNorm) &&
+                m.searchName.includes(keywordNorm)
+            )
+        )
+        .slice(0, 8);
 
     if (matches.length > 0) {
         list.style.display = 'block';
         matches.forEach(m => {
             const li = document.createElement('li');
             li.innerText = m.name;
+
             li.onclick = () => {
-                state[dayIdx].selectedSongs[songPos] = musicData.indexOf(m);
+                state[dayIdx].selectedSongs[songPos] = m.index;
                 list.style.display = 'none';
                 saveAndRender();
             };
+
             list.appendChild(li);
         });
     } else {
         list.style.display = 'none';
     }
-} 
+}
+
 function sortDays(type) {
     if (type === 'day') {
         state.sort((a, b) => a.day - b.day);
@@ -57,31 +81,6 @@ function sortDays(type) {
     render();
 }
 
-function filterSongs(dayIdx, songPos, keyword) {
-    const list = document.getElementById(`results-${dayIdx}-${songPos}`);
-    list.innerHTML = '';
-    if (!keyword) { list.style.display = 'none'; return; }
-    
-    const matches = musicData.filter(m => m.name.toLowerCase().includes(keyword.toLowerCase())).slice(0, 8);
-    
-    if (matches.length > 0) {
-        list.style.display = 'block';
-        matches.forEach(m => {
-            const li = document.createElement('li'); 
-            li.innerText = m.name;
-            li.onclick = () => { 
-                state[dayIdx].selectedSongs[songPos] = musicData.indexOf(m); 
-                list.style.display = 'none'; 
-                saveAndRender(); 
-            };
-            list.appendChild(li);
-        });
-    } else {
-        /* 一致する曲がないときはリストを隠す */
-        list.style.display = 'none';
-    }
-}
-
 function setCount(dayIdx, songPos, val) {
     const num = parseInt(val) || 0;
     state[dayIdx].counts[songPos] = Math.max(0, num);
@@ -100,11 +99,12 @@ function exportData() {
     a.click();
     URL.revokeObjectURL(url);
 }
+
 // 全データを初期状態に
 function resetAllData() {
     if(!confirm("本当に全データをリセットしますか？")) return;
     state = Array.from({length: 30}, (_, i) => ({
-        day: i + 1, selectedSongs: [0, 0, 0, 0], counts: [0, 0, 0, 0], score123: 0, score4: 0, difficulty: "中"
+        day: i + 1, selectedSongs: [null, null, null, null], counts: [0, 0, 0, 0], score123: 0, score4: 0, difficulty: "中"
     }));
     saveAndRender();
     alert("初期化しました");
