@@ -5,6 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>【あんスタ】ツアイベセトリ管理ツール</title>
     <style>
+        /* サイズ計算を余白込み*/
+* {
+    box-sizing: border-box;
+}
+
+/*スマホ用調整を強化 */
+@media (max-width: 600px) {
+    body {
+        padding: 10px; 
+    }
+    .container {
+        padding: 15px; 
+    }
+    .day-card {
+        padding: 12px; 
+    }
+    
+    .song-grid {
+        grid-template-columns: 1fr; 
+    }
+
+    /* 並びが崩れないように調整 */
+    .filter-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    .filter-buttons button {
+        flex: 1 1 calc(33.333% - 10px); /* 3つずつ並ぶ */
+        font-size: 12px;
+        padding: 8px 5px;
+    }
+}
         @media (min-width: 800px) { .container { max-width: 1000px; } }
         @media (max-width: 600px) { .song-grid { grid-template-columns: repeat(2, 1fr); } }
         :root { 
