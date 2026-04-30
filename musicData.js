@@ -171,7 +171,7 @@ const musicData = [
     { name: "セイクリッド ルイン", attr: "Glitter", time: 141 },
     { name: "Awakeing Myth", attr: "Glitter", time: 142 },
     { name: "I ''Witch'' You A Happy Halloween!", attr: "Glitter", time: 143 },
-    { name: "Valentaine Eve's Nightmare", attr: "Glitter", time: 144 },
+    { name: "Valentine Eve's Nightmare", attr: "Glitter", time: 144 },
     { name: "羽ばたきのフォルティシモ", attr: "Glitter", time: 144 },
     { name: "Milky Starry Charm", attr: "Glitter", time: 144 },
     { name: "メイド・イン・トキメキ♪", attr: "Glitter", time: 144 },
