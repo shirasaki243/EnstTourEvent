@@ -160,7 +160,7 @@ const musicData = [
     { name: "ハム太郎とっとこうた", attr: "Glitter", time: 134 },
     { name: "DESTRUCTION ROAD", attr: "Glitter", time: 136 },
     { name: "LEMON SQASH CHEERS!", attr: "Glitter", time: 136 },
-    { name: "RUler's Truth", attr: "Glitter", time: 136 },
+    { name: "Ruler's Truth", attr: "Glitter", time: 136 },
     { name: "Play''Tag''", attr: "Glitter", time: 137 },
     { name: "Crush of Judgement", attr: "Glitter", time: 138 },
     { name: "KING", attr: "Glitter", time: 138 },
