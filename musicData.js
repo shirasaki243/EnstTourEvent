@@ -148,7 +148,7 @@ const musicData = [
     //Glitter！「新しい曲を追加するときは、必ずファイルの『一番下（最後）』に書き足す」！
     { name: "紅月いろは唄", attr: "Glitter", time: 123 },
     { name: "Sweet Sweet White Song", attr: "Glitter", time: 124 },
-    { name: "Blooming Worlg", attr: "Glitter", time: 125 },
+    { name: "Blooming World", attr: "Glitter", time: 125 },
     { name: "GROWING STARRYDAYS", attr: "Glitter", time: 126 },
     { name: "ベリイ・ベリイ・スイート・ホワイト♡", attr: "Glitter", time: 127 },
     { name: "Mémoire Antique", attr: "Glitter", time: 129 },
