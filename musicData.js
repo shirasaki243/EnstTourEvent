@@ -314,7 +314,7 @@ const musicData = [
     { name: "年越しあんさんぶる！！2022→2023", attr: "All", time: 214 },
     
 
-    // 以上2026.4.22時点、以下今後の拡張用　！「新しい曲を追加するときは、必ずファイルの『一番下（最後）』に書き足す」！ sparkle Brilliant Glitter Flash All　今後の拡張用
+    // 以上2026.4.30時点、以下今後の拡張用　！「新しい曲を追加するときは、必ずファイルの『一番下（最後）』に書き足す」！ sparkle Brilliant Glitter Flash All　今後の拡張用
     { name: "CALL YOUR NAME!!", attr: "All", time: 162 },
     { name: "CIVIL WAR", attr: "Flash", time: 154 },
     { name: "最新", attr: "glitter", time: 120 },
