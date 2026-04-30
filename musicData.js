@@ -226,7 +226,7 @@ const musicData = [
     { name: "Knockin' Fantasy", attr: "Flash", time: 129 },
     { name: "Stippling", attr: "Flash", time: 129 },
     { name: "Last Lament", attr: "Flash", time: 131 },
-    { name: "!st SING-ALONG☆", attr: "Flash", time: 134 },
+    { name: "1st SING-ALONG☆", attr: "Flash", time: 134 },
     { name: "Mystic Fragrance", attr: "Flash", time: 135 },
     { name: "来来☆2winkイリュージョン", attr: "Flash", time: 136 },
     { name: "今宵月の館にて", attr: "Flash", time: 137 },
