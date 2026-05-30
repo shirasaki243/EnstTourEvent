@@ -178,7 +178,7 @@ const musicData = [
     { name: "デートプランA to Z", attr: "Glitter", time: 145 },
     { name: "シュガー・スパイス方程式", attr: "Glitter", time: 145 },
     { name: "LOUDEST BUGS", attr: "Glitter", time: 145 },
-    { name: "斬ー決意ノ刃ー", attr: "Glitter", time: 146 },
+    { name: "斬-決意ノ刃-", attr: "Glitter", time: 146 },
     { name: "夜に駆ける", attr: "Glitter", time: 146 },
     { name: "Ai☆$!!", attr: "Glitter", time: 146 },
     { name: "虹色のSeasons", attr: "Glitter", time: 146 },
